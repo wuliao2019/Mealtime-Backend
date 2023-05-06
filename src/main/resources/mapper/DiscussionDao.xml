@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cqu.mealtime.dao.DiscussionDao">
+
+    <resultMap id="BaseResultMap" type="com.cqu.mealtime.entity.Discussion">
+        <!--@Table discussion-->
+        <result property="discussionId" column="discussion_id" jdbcType="INTEGER"/>
+        <result property="discussionName" column="discussion_name" jdbcType="VARCHAR"/>
+        <result property="discussionContent" column="discussion_content" jdbcType="VARCHAR"/>
+        <result property="discussionTime" column="discussion_time" jdbcType="VARCHAR"/>
+        <result property="canId" column="can_id" jdbcType="INTEGER"/>
+        <result property="stallId" column="stall_id" jdbcType="INTEGER"/>
+        <result property="usrId" column="usr_id" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="BaseResultMap">
+        select discussion_id,
+               discussion_name,
+               discussion_content,
+               discussion_time,
+               can_id,
+               stall_id,
+               usr_id
+        from discussion
+        where discussion_id = #{discussionId}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="BaseResultMap">
+        select
+        discussion_id, discussion_name, discussion_content, discussion_time, can_id, stall_id, users.usr_id, user_name
+        from discussion inner join users on discussion.usr_id = users.usr_id
+        <where>
+            <if test="discussionName != null and discussionName != ''">
+                and (discussion_name like concat('%',#{discussionName},'%') or discussion_content like concat('%',#{discussionName},'%'))
+            </if>
+            <if test="canId != null">
+                and can_id = #{canId}
+            </if>
+            <if test="stallId != null">
+                and stall_id = #{stallId}
+            </if>
+        </where>
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="BaseResultMap">
+        select discussion_id,
+               discussion_name,
+               discussion_content,
+               discussion_time,
+               can_id,
+               stall_id,
+               usr_id
+        from mealtime_db.discussion
+    </select>
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from discussion
+        <where>
+            <if test="discussionId != null">
+                and discussion_id = #{discussionId}
+            </if>
+            <if test="discussionName != null and discussionName != ''">
+                and discussion_name = #{discussionName}
+            </if>
+            <if test="discussionContent != null and discussionContent != ''">
+                and discussion_content = #{discussionContent}
+            </if>
+            <if test="discussionTime != null and discussionTime != ''">
+                and discussion_time = #{discussionTime}
+            </if>
+            <if test="canId != null">
+                and can_id = #{canId}
+            </if>
+            <if test="stallId != null">
+                and stall_id = #{stallId}
+            </if>
+            <if test="usrId != null">
+                and usr_id = #{usrId}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="discussionId" useGeneratedKeys="true">
+        insert into discussion(discussion_name, discussion_content, discussion_time, can_id, stall_id, usr_id)
+        values (#{discussionName}, #{discussionContent}, #{discussionTime}, #{canId}, #{stallId}, #{usrId})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="discussionId" useGeneratedKeys="true">
+        insert into discussion(discussion_name, discussion_content, discussion_time, can_id, stall_id, usr_id)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.discussionName}, #{entity.discussionContent}, #{entity.discussionTime}, #{entity.canId},
+            #{entity.stallId}, #{entity.usrId})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="discussionId" useGeneratedKeys="true">
+        insert into discussion(discussion_name, discussion_content, discussion_time, can_id, stall_id, usr_id)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.discussionName}, #{entity.discussionContent}, #{entity.discussionTime}, #{entity.canId},
+            #{entity.stallId}, #{entity.usrId})
+        </foreach>
+        on duplicate key update
+        discussion_name = values(discussion_name),
+        discussion_content = values(discussion_content),
+        discussion_time = values(discussion_time),
+        can_id = values(can_id),
+        stall_id = values(stall_id),
+        usr_id = values(usr_id)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update discussion
+        <set>
+            <if test="discussionName != null and discussionName != ''">
+                discussion_name = #{discussionName},
+            </if>
+            <if test="discussionContent != null and discussionContent != ''">
+                discussion_content = #{discussionContent},
+            </if>
+            <if test="discussionTime != null and discussionTime != ''">
+                discussion_time = #{discussionTime},
+            </if>
+            <if test="canId != null">
+                can_id = #{canId},
+            </if>
+            <if test="stallId != null">
+                stall_id = #{stallId},
+            </if>
+            <if test="usrId != null">
+                usr_id = #{usrId},
+            </if>
+        </set>
+        where discussion_id = #{discussionId}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete
+        from discussion
+        where discussion_id = #{discussionId}
+    </delete>
+
+</mapper>
+
