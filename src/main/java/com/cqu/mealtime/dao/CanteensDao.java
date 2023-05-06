@@ -22,7 +22,7 @@ public interface CanteensDao {
      */
     Canteens queryById(Integer canteenId);
 
-    Integer count();
+    Integer countNum();
 
     /**
      * 查询指定行数据

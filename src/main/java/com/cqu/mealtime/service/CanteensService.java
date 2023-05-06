@@ -22,7 +22,7 @@ public interface CanteensService {
      */
     Canteens queryById(Integer canteenId);
 
-    Integer count();
+    Integer countNum();
 
     /**
      * 分页查询

@@ -140,7 +140,7 @@
         where canteen_id = #{canteenId}
     </delete>
 
-    <select id="count" resultMap="java.lang.Integer">
+    <select id="countNum" resultType="java.lang.Integer">
         select count(*)
         from canteens
     </select>

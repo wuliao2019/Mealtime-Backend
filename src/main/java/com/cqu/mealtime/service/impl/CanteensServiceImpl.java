@@ -34,8 +34,8 @@ public class CanteensServiceImpl implements CanteensService {
     }
 
     @Override
-    public Integer count() {
-        return this.canteensDao.count();
+    public Integer countNum() {
+        return this.canteensDao.countNum();
     }
 
     /**
