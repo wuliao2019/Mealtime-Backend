@@ -27,7 +27,7 @@
     <!--查询指定行数据-->
     <select id="queryAllByLimit" resultMap="BaseResultMap">
         select
-        stall_id, stall_name, stall_num, can_id, loc_id, ty_id
+        stall_id, stall_name, stall_num, can_id, loc_id, ty_id, people_count
         from stalls
         <where>
             <if test="stallId != null">
@@ -133,6 +133,9 @@
             </if>
             <if test="tyId != null">
                 ty_id = #{tyId},
+            </if>
+            <if test="peopleCount != null">
+                people_count = #{peopleCount},
             </if>
         </set>
         where stall_id = #{stallId}

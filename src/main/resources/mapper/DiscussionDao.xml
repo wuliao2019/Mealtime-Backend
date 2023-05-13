@@ -30,7 +30,7 @@
     <select id="queryAllByLimit" resultMap="BaseResultMap">
         select
         discussion_id, discussion_name, discussion_content, discussion_time, can_id, stall_id, users.usr_id, user_name
-        from discussion inner join users on discussion.usr_id = users.usr_id
+        from discussion inner join users on discussion.usr_id = users.usr_id order by discussion_id desc
         <where>
             <if test="discussionName != null and discussionName != ''">
                 and (discussion_name like concat('%',#{discussionName},'%') or discussion_content like concat('%',#{discussionName},'%'))

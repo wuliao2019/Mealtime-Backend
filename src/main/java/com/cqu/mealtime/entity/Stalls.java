@@ -23,7 +23,7 @@ public class Stalls implements Serializable {
 
     private Integer tyId;
 
-
+    private Integer peopleCount;
     public Integer getStallId() {
         return stallId;
     }
@@ -72,5 +72,12 @@ public class Stalls implements Serializable {
         this.tyId = tyId;
     }
 
+    public Integer getPeopleCount() {
+        return peopleCount;
+    }
+
+    public void setPeopleCount(Integer peopleCount) {
+        this.peopleCount = peopleCount;
+    }
 }
 

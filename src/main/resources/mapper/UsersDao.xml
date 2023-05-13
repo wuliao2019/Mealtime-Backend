@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cqu.mealtime.dao.UsersDao">
+
+    <resultMap id="BaseResultMap" type="com.cqu.mealtime.entity.Users">
+        <!--@Table users-->
+        <result property="usrId" column="usr_id" jdbcType="INTEGER"/>
+        <result property="userName" column="user_name" jdbcType="VARCHAR"/>
+        <result property="userPwd" column="user_pwd" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="usrId" useGeneratedKeys="true">
+        insert into users(user_name, user_pwd)
+        values (#{userName}, #{userPwd})
+    </insert>
+
+    <select id="queryByName" resultMap="BaseResultMap">
+        select
+            usr_id,user_name,user_pwd
+        from users
+        where user_name = #{userName}
+    </select>
+
+    <select id="checkUser" resultMap="BaseResultMap">
+        select usr_id,
+               user_name,
+               user_pwd
+        from users
+        where user_name = #{userName}
+          and user_pwd = #{userPwd}
+    </select>
+
+</mapper>
+
