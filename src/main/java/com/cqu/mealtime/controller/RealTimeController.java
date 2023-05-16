@@ -29,6 +29,7 @@ import static com.cqu.mealtime.util.RequestUtil.*;
 public class RealTimeController {
     private final List<Double> num = Arrays.asList(1.0, 5.0, 9.0, 10.0);
     Random r = new Random();
+
     @Resource
     private StallsService stallsService;
 
@@ -45,12 +46,13 @@ public class RealTimeController {
 
     @PostMapping("photo")
     public String savePic(@RequestParam("file") MultipartFile file) {
+        long startTime = System.currentTimeMillis();
         Date date = new Date();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd_HHmmss_SSS");
         String name = simpleDateFormat.format(date);
         String fileName = name + ".jpg";
         String imgFilePath = "/home/program/mealtime/";//新生成的图片
-        System.out.println("开始接收图片");
+        System.out.println("开始接收图片 - " + (System.currentTimeMillis() - startTime) + " ms");
         try {
             File targetFile = new File(imgFilePath, fileName);
             if (!targetFile.getParentFile().exists()) //注意，判断父级路径是否存在
@@ -60,7 +62,7 @@ public class RealTimeController {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        System.out.println("接收图片完成");
+        System.out.println("接收图片完成 - " + (System.currentTimeMillis() - startTime) + " ms");
         Map<String, String> params = new HashMap<>();
         params.put("src_path", imgFilePath + fileName);
         params.put("save_dir", imgFilePath);
@@ -71,12 +73,7 @@ public class RealTimeController {
         try {
             CompletableFuture.allOf(
                     CompletableFuture.runAsync(new FutureTask<Void>(() -> {
-                        System.out.println("开始推理图片");
-                        jsonObject[0] = new JSONObject(doPost("http://localhost:8000/infer", urlEncode(params)));
-                        System.out.println("推理图片完成");
-                    }, null)),
-                    CompletableFuture.runAsync(new FutureTask<Void>(() -> {
-                        System.out.println("开始识别档口名称");
+                        System.out.println("开始识别档口名称 - " + (System.currentTimeMillis() - startTime) + " ms");
                         JSONObject js = new JSONObject(queryName(imgFilePath + fileName));
                         if (js.getInt("words_result_num") > 0) {
                             JSONArray jsonArray = js.getJSONArray("words_result");
@@ -107,7 +104,12 @@ public class RealTimeController {
                                 System.out.println(stallsList.get(ind).getStallName());
                             }
                         }
-                        System.out.println("识别档口名称完成");
+                        System.out.println("识别档口名称完成 - " + (System.currentTimeMillis() - startTime) + " ms");
+                    }, null)),
+                    CompletableFuture.runAsync(new FutureTask<Void>(() -> {
+                        System.out.println("开始推理图片 - " + (System.currentTimeMillis() - startTime) + " ms");
+                        jsonObject[0] = new JSONObject(doPost("http://localhost:8000/infer", urlEncode(params)));
+                        System.out.println("推理图片完成 - " + (System.currentTimeMillis() - startTime) + " ms");
                     }, null))
             ).get();
         } catch (InterruptedException | ExecutionException e) {
@@ -120,7 +122,7 @@ public class RealTimeController {
 
     @RequestMapping("getImg/{file_name}")
     public void getImg(HttpServletResponse response, @PathVariable("file_name") String name) {
-        System.out.println("/getImg->访问图片->开始");
+        System.out.println("\n开始访问图片: " + name);
         String filePath = "/home/program/mealtime/" + name + "_out.jpg";
         File imageFile = new File(filePath);
         if (imageFile.exists()) {
@@ -135,7 +137,7 @@ public class RealTimeController {
                     os.write(buffer, 0, count);
                     os.flush();
                 }
-                System.out.println("[图片接口]输出完成");
+                System.out.println("[图片接口]输出完成\n");
                 fis.close();
                 if (os != null)
                     os.close();

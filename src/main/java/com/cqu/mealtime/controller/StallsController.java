@@ -1,6 +1,8 @@
 package com.cqu.mealtime.controller;
 
+import com.cqu.mealtime.entity.Pictures;
 import com.cqu.mealtime.entity.Stalls;
+import com.cqu.mealtime.service.PicturesService;
 import com.cqu.mealtime.service.StallsService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,9 +25,11 @@ public class StallsController {
     @Resource
     private StallsService stallsService;
 
+    @Resource
+    private PicturesService picturesService;
+
     /**
-     *
-     * @param stalls      筛选条件
+     * @param stalls 筛选条件
      * @return 查询结果
      */
     @GetMapping
@@ -75,6 +79,30 @@ public class StallsController {
     @DeleteMapping
     public ResponseEntity<Boolean> deleteById(Integer id) {
         return ResponseEntity.ok(this.stallsService.deleteById(id));
+    }
+
+    @PostMapping("addPic")
+    public void addPic(Pictures pictures) {
+        pictures.setTime(System.currentTimeMillis());
+        this.picturesService.insert(pictures);
+        new Thread(() -> updateTime(pictures.getStallId())).start();
+    }
+
+    private void updateTime(Integer stallId) {
+        List<Pictures> picturesList = this.picturesService.queryRecent(System.currentTimeMillis() - 1800000, stallId);
+        if (picturesList.size() > 0) {
+            double m = 0, n = 0;
+            for (Pictures pictures : picturesList) {
+                double t = (double) (System.currentTimeMillis() - pictures.getTime()) / 60000;
+                double temp = Math.pow(0.8, t);
+                m += temp * pictures.getPeopleNum();
+                n += temp;
+            }
+            Stalls stalls = new Stalls();
+            stalls.setStallId(stallId);
+            stalls.setPeopleCount(m / n);
+            this.stallsService.update(stalls);
+        }
     }
 }
 

@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.cqu</groupId>
     <artifactId>mealtime</artifactId>
-    <version>1.4</version>
+    <version>1.5</version>
     <name>mealtime</name>
     <description>mealtime</description>
     <properties>

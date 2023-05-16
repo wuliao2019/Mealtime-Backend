@@ -1,5 +1,6 @@
 package com.cqu.mealtime.entity;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -9,6 +10,7 @@ import java.io.Serializable;
  * @since 2023-04-27 17:20:14
  */
 public class Stalls implements Serializable {
+    @Serial
     private static final long serialVersionUID = 323219381708905055L;
 
     private Integer stallId;
@@ -23,7 +25,7 @@ public class Stalls implements Serializable {
 
     private Integer tyId;
 
-    private Integer peopleCount;
+    private Double peopleCount;
     public Integer getStallId() {
         return stallId;
     }
@@ -72,11 +74,11 @@ public class Stalls implements Serializable {
         this.tyId = tyId;
     }
 
-    public Integer getPeopleCount() {
+    public Double getPeopleCount() {
         return peopleCount;
     }
 
-    public void setPeopleCount(Integer peopleCount) {
+    public void setPeopleCount(Double peopleCount) {
         this.peopleCount = peopleCount;
     }
 }

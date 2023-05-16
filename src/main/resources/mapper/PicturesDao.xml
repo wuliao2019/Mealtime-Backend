@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cqu.mealtime.dao.PicturesDao">
+
+    <resultMap id="BaseResultMap" type="com.cqu.mealtime.entity.Pictures">
+        <!--@Table pictures-->
+        <result property="pictureId" column="picture_id" jdbcType="INTEGER"/>
+        <result property="time" column="time" jdbcType="INTEGER"/>
+        <result property="fileName" column="file_name" jdbcType="VARCHAR"/>
+        <result property="stallId" column="stall_id" jdbcType="INTEGER"/>
+        <result property="peopleNum" column="people_num" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="BaseResultMap">
+        select picture_id,
+               time,
+               file_name,
+               stall_id,
+               people_num
+        from pictures
+        where picture_id = #{pictureId}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="BaseResultMap">
+        select
+        picture_id, time, file_name, stall_id, people_num
+        from pictures
+        <where>
+            <if test="pictureId != null">
+                and picture_id = #{pictureId}
+            </if>
+            <if test="time != null">
+                and time = #{time}
+            </if>
+            <if test="fileName != null and fileName != ''">
+                and file_name = #{fileName}
+            </if>
+            <if test="stallId != null">
+                and stall_id = #{stallId}
+            </if>
+            <if test="peopleNum != null">
+                and people_num = #{peopleNum}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <select id="queryRecent" resultMap="BaseResultMap">
+        select picture_id, time, file_name, stall_id, people_num
+        from pictures
+        <where>
+            time > #{current} and stall_id = #{stallId}
+        </where>
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="BaseResultMap">
+        select picture_id,
+               time,
+               file_name,
+               stall_id,
+               people_num
+        from mealtime_db.pictures
+    </select>
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from pictures
+        <where>
+            <if test="pictureId != null">
+                and picture_id = #{pictureId}
+            </if>
+            <if test="time != null">
+                and time = #{time}
+            </if>
+            <if test="fileName != null and fileName != ''">
+                and file_name = #{fileName}
+            </if>
+            <if test="stallId != null">
+                and stall_id = #{stallId}
+            </if>
+            <if test="peopleNum != null">
+                and people_num = #{peopleNum}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="pictureId" useGeneratedKeys="true">
+        insert into pictures(time, file_name, stall_id, people_num)
+        values (#{time}, #{fileName}, #{stallId}, #{peopleNum})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="pictureId" useGeneratedKeys="true">
+        insert into pictures(time, file_name, stall_id, people_num)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.time}, #{entity.fileName}, #{entity.stallId}, #{entity.peopleNum})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="pictureId" useGeneratedKeys="true">
+        insert into pictures(time, file_name, stall_id, people_num)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.time}, #{entity.fileName}, #{entity.stallId}, #{entity.peopleNum})
+        </foreach>
+        on duplicate key update
+        time = values(time),
+        file_name = values(file_name),
+        stall_id = values(stall_id),
+        people_num = values(people_num)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update pictures
+        <set>
+            <if test="time != null">
+                time = #{time},
+            </if>
+            <if test="fileName != null and fileName != ''">
+                file_name = #{fileName},
+            </if>
+            <if test="stallId != null">
+                stall_id = #{stallId},
+            </if>
+            <if test="peopleNum != null">
+                people_num = #{peopleNum},
+            </if>
+        </set>
+        where picture_id = #{pictureId}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete
+        from pictures
+        where picture_id = #{pictureId}
+    </delete>
+
+</mapper>
+
