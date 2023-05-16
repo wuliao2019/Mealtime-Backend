@@ -1,15 +1,26 @@
 package com.cqu.mealtime.util;
 
+import okhttp3.*;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Base64;
 import java.util.Map;
 
 public class RequestUtil {
+    public static final String API_KEY = "wkRrmGpuV9nFOWhwIpr4z0f3";
+    public static final String SECRET_KEY = "GNgMEbW4snhZD1wPr6qF9sLVcdUFxZ4m";
+    static final OkHttpClient HTTP_CLIENT = new OkHttpClient().newBuilder().build();
+
     /**
      * 将map型转为请求参数型
      */
@@ -78,6 +89,63 @@ public class RequestUtil {
             if (connection != null) {
                 connection.disconnect();// 关闭远程连接
             }
+        }
+        return result;
+    }
+
+    /**
+     * 获取文件base64编码
+     *
+     * @param path      文件路径
+     * @param urlEncode 如果Content-Type是application/x-www-form-urlencoded时,传true
+     * @return base64编码信息，不带文件头
+     * @throws IOException IO异常
+     */
+    static String getFileContentAsBase64(String path, boolean urlEncode) throws IOException {
+        byte[] b = Files.readAllBytes(Paths.get(path));
+        String base64 = Base64.getEncoder().encodeToString(b);
+        if (urlEncode) {
+            base64 = URLEncoder.encode(base64, "utf-8");
+        }
+        return base64;
+    }
+
+
+    /**
+     * 从用户的AK，SK生成鉴权签名（Access Token）
+     *
+     * @return 鉴权签名（Access Token）
+     * @throws IOException IO异常
+     */
+    static String getAccessToken() throws IOException {
+        MediaType mediaType = MediaType.parse("application/x-www-form-urlencoded");
+        RequestBody body = RequestBody.create(mediaType, "grant_type=client_credentials&client_id=" + API_KEY
+                + "&client_secret=" + SECRET_KEY);
+        Request request = new Request.Builder()
+                .url("https://aip.baidubce.com/oauth/2.0/token")
+                .method("POST", body)
+                .addHeader("Content-Type", "application/x-www-form-urlencoded")
+                .build();
+        Response response = HTTP_CLIENT.newCall(request).execute();
+        return new JSONObject(response.body().string()).getString("access_token");
+    }
+
+    public static String queryName(String file_path) {
+        MediaType mediaType = MediaType.parse("application/x-www-form-urlencoded");
+        Request request;
+        String result;
+        try {
+            RequestBody body = RequestBody.create(mediaType, "image=" + getFileContentAsBase64(file_path, true));
+            request = new Request.Builder()
+                    .url("https://aip.baidubce.com/rest/2.0/ocr/v1/facade?access_token=" + getAccessToken())
+                    .method("POST", body)
+                    .addHeader("Content-Type", "application/x-www-form-urlencoded")
+                    .addHeader("Accept", "application/json")
+                    .build();
+            Response response = HTTP_CLIENT.newCall(request).execute();
+            result = response.body().string();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
         return result;
     }

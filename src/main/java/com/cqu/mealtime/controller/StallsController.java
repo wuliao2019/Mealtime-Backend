@@ -76,6 +76,5 @@ public class StallsController {
     public ResponseEntity<Boolean> deleteById(Integer id) {
         return ResponseEntity.ok(this.stallsService.deleteById(id));
     }
-
 }
 

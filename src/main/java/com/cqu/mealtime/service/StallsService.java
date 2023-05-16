@@ -50,4 +50,5 @@ public interface StallsService {
      */
     boolean deleteById(Integer stallId);
 
+    List<Stalls> getStallsByName(String name);
 }

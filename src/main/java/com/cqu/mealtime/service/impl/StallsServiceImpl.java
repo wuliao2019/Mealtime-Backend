@@ -74,4 +74,9 @@ public class StallsServiceImpl implements StallsService {
     public boolean deleteById(Integer stallId) {
         return this.stallsDao.deleteById(stallId) > 0;
     }
+
+    @Override
+    public List<Stalls> getStallsByName(String name) {
+        return this.stallsDao.getStallsByName(name);
+    }
 }

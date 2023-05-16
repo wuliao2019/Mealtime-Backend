@@ -34,7 +34,7 @@
                 and stall_id = #{stallId}
             </if>
             <if test="stallName != null and stallName != ''">
-                and stall_name like concat('%',#{stallName},'%')
+                and (stall_name like concat('%',#{stallName},'%') or SOUNDEX(stall_name)=SOUNDEX(#{stallName}))
             </if>
             <if test="stallNum != null">
                 and stall_num = #{stallNum}
@@ -47,6 +47,18 @@
             </if>
             <if test="tyId != null">
                 and ty_id = #{tyId}
+            </if>
+        </where>
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="getStallsByName" resultMap="BaseResultMap">
+        select
+        stall_id, stall_name, can_id, loc_id
+        from stalls
+        <where>
+            <if test="stallName != null and stallName != ''">
+                and (stall_name like concat('%',#{stallName},'%') or SOUNDEX(stall_name)=SOUNDEX(#{stallName}))
             </if>
         </where>
     </select>

@@ -78,5 +78,6 @@ public interface StallsDao {
      */
     int deleteById(Integer stallId);
 
+    List<Stalls> getStallsByName(String name);
 }
 

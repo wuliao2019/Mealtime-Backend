@@ -75,6 +75,5 @@ public class CanteensController {
     public ResponseEntity<Boolean> deleteById(Integer id) {
         return ResponseEntity.ok(this.canteensService.deleteById(id));
     }
-
 }
 
