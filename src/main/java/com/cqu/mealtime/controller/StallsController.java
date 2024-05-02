@@ -7,7 +7,7 @@ import com.cqu.mealtime.service.StallsService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.util.List;
 
 /**
@@ -90,7 +90,7 @@ public class StallsController {
 
     private void updateTime(Integer stallId) {
         List<Pictures> picturesList = this.picturesService.queryRecent(System.currentTimeMillis() - 1800000, stallId);
-        if (picturesList.size() > 0) {
+        if (!picturesList.isEmpty()) {
             double m = 0, n = 0;
             for (Pictures pictures : picturesList) {
                 double t = (double) (System.currentTimeMillis() - pictures.getTime()) / 60000;

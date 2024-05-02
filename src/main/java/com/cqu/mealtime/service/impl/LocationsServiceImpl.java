@@ -5,7 +5,7 @@ import com.cqu.mealtime.dao.LocationsDao;
 import com.cqu.mealtime.service.LocationsService;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.util.List;
 
 /**

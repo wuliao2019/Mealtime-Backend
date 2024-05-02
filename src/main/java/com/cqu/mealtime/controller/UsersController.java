@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.util.List;
 
 @RestController
@@ -19,14 +19,14 @@ public class UsersController {
 
     @PostMapping
     public ResponseEntity<Integer> add(Users users) {
-        if (this.usersService.queryByName(users).size() > 0)
+        if (!this.usersService.queryByName(users).isEmpty())
             return ResponseEntity.ok(-1);
         return ResponseEntity.ok(this.usersService.insert(users));
     }
 
     @GetMapping
     public ResponseEntity<Boolean> checkExist(Users users) {
-        return ResponseEntity.ok(this.usersService.queryByName(users).size() > 0);
+        return ResponseEntity.ok(!this.usersService.queryByName(users).isEmpty());
     }
 
     @PostMapping("Login")

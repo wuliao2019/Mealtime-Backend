@@ -10,8 +10,8 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.OutputStream;
@@ -89,7 +89,7 @@ public class RealTimeController {
                             }
                             System.out.println(max_n);
                             List<Stalls> stallsList = this.stallsService.getStallsByName(max_n);
-                            if (stallsList.size() > 0) {
+                            if (!stallsList.isEmpty()) {
                                 double min = getStringDistance(stallsList.get(0).getStallName(), max_n);
                                 int ind = 0;
                                 for (int i = 1; i < stallsList.size(); i++) {

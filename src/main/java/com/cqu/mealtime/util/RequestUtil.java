@@ -64,7 +64,7 @@ public class RequestUtil {
                 String temp;
                 while ((temp = bufferedReader.readLine()) != null) {
                     sbf.append(temp);
-                    sbf.append(System.getProperty("line.separator"));
+                    sbf.append(System.lineSeparator());
                 }
                 result = sbf.toString();
             }
@@ -105,7 +105,7 @@ public class RequestUtil {
         byte[] b = Files.readAllBytes(Paths.get(path));
         String base64 = Base64.getEncoder().encodeToString(b);
         if (urlEncode) {
-            base64 = URLEncoder.encode(base64, "utf-8");
+            base64 = URLEncoder.encode(base64, StandardCharsets.UTF_8);
         }
         return base64;
     }
@@ -119,8 +119,7 @@ public class RequestUtil {
      */
     static String getAccessToken() throws IOException {
         MediaType mediaType = MediaType.parse("application/x-www-form-urlencoded");
-        RequestBody body = RequestBody.create(mediaType, "grant_type=client_credentials&client_id=" + API_KEY
-                + "&client_secret=" + SECRET_KEY);
+        RequestBody body = RequestBody.create(mediaType, "grant_type=client_credentials&client_id=" + API_KEY + "&client_secret=" + SECRET_KEY);
         Request request = new Request.Builder()
                 .url("https://aip.baidubce.com/oauth/2.0/token")
                 .method("POST", body)

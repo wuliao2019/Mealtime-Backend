@@ -5,7 +5,7 @@ import com.cqu.mealtime.dao.StallsDao;
 import com.cqu.mealtime.service.StallsService;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.util.List;
 
 /**
